@@ -1,7 +1,7 @@
 ImageResizeWebService
 =====================
 
-Nojde.js Gmagick web server
+Nojde.js Gmagick realtime image resize web service.
 
 Quick start
 
@@ -13,6 +13,7 @@ Install dependencies from NPM (gm)
 
 > npm install gm
 
+> npm install request
 
 
 Run script
