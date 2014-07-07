@@ -49,7 +49,7 @@ http.createServer(function(req, res) {
                 gm('./orig/' + filename)
                         .resize(720, 720)
 
-                        //.stroke("#ffffff")
+                        .stroke("#ffffff")
 
                         //  .drawCircle(10, 10, 20, 10)
                         .font("./font/RobotoCondensed-Regular.ttf", 15)
