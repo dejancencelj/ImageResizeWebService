@@ -1,3 +1,5 @@
-﻿/nbproject/
-/node_modules/
-/config/
+﻿/nbproject
+/node_modules
+/config
+/public_html/orig/
+/public_html/output/
