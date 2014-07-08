@@ -1,10 +1,11 @@
+console.log(__dirname);
 var fs = require('fs')
         , gm = require('gm')
         , request = require('request')
         , http = require('http')
-        , url = require("url");
+        , url = require('url');
 
-var index = fs.readFileSync('index.html');
+//var index = fs.readFileSync('index.html');
 var startTime = 0;
 var endTime = 0;
 var diif = 0;
@@ -12,22 +13,17 @@ http.createServer(function(req, res) {
     startTime = new Date().getTime();
     var parsedUrl = url.parse(req.url, true); // true to get query as object
     var queryAsObject = parsedUrl.query;
-
     // console.log(JSON.stringify(req));
 
     var image_url = queryAsObject.url;
-
     if (typeof image_url === "undefined") {
         res.writeHead(200, {'Content-Type': 'text/html'});
         res.end("missing url parameter... try http://kvazar.rtvslo.si/?url=http://www.wired.com/wiredenterprise/wp-content/uploads//2012/10/ff_googleinfrastructure_large.jpg");
         return;
     }
     ;
-
     var filename = image_url.substring(image_url.lastIndexOf("/"), image_url.length);
-
     console.log(filename);
-
     if (filename === "/") {
         res.writeHead(200, {'Content-Type': 'text/html'});
         res.end("Malformed url");
@@ -45,9 +41,9 @@ http.createServer(function(req, res) {
         return;
     }
 
-    fs.exists('./output' + filename, function(exists) {
+    fs.exists(__dirname + '/output' + filename, function(exists) {
         if (exists) {
-            fs.readFile('./output' + filename, function(err, data) {
+            fs.readFile(__dirname + '/output' + filename, function(err, data) {
                 if (err)
                     throw err; // Fail if the file can't be read.
 
@@ -56,27 +52,25 @@ http.createServer(function(req, res) {
                 endTime = new Date().getTime();
                 diff = endTime - startTime;
                 console.log("File exist... time to serve: " + diff + "ms");
-
             });
         } else {
-            download(image_url, './orig' + filename, res, function() {
+            download(image_url, __dirname + '/orig' + filename, res, function() {
                 console.log('done download');
-
-                fs.exists('./orig' + filename, function(exists) {
+                fs.exists(__dirname + '/orig' + filename, function(exists) {
                     if (exists) {
 
                         endTime = new Date().getTime();
                         diff = endTime - startTime;
                         console.log("Time to download: " + diff + "ms");
-                        gm('./orig/' + filename)
+                        gm(__dirname + '/orig/' + filename)
                                 .resize(720, 720)
 
                                 .stroke("#ffffff")
 
                                 //  .drawCircle(10, 10, 20, 10)
-                                .font("./font/RobotoCondensed-Regular.ttf", 15)
+                                .font("font/RobotoCondensed-Regular.ttf", 15)
                                 .drawText(30, 20, "MMC RTVSLO")
-                                .write('./output' + filename, function(err) {
+                                .write(__dirname + '/output' + filename, function(err) {
                                     if (!err)
                                         console.log('done resize');
                                     console.log(JSON.stringify(err));
@@ -84,7 +78,7 @@ http.createServer(function(req, res) {
                                     diff = endTime - startTime;
                                     console.log("Time to resize: " + diff + "ms");
 
-                                    fs.readFile('./output' + filename, function(err, data) {
+                                    fs.readFile(__dirname + '/output' + filename, function(err, data) {
                                         if (err)
                                             throw err; // Fail if the file can't be read.
 
@@ -94,10 +88,10 @@ http.createServer(function(req, res) {
                                         diff = endTime - startTime;
                                         console.log("Time to serve: " + diff + "ms");
 
-                                        fs.unlink('./orig/' + filename, function(err) {
+                                        fs.unlink(__dirname + '/orig/' + filename, function(err) {
                                             if (err)
                                                 throw err;
-                                            console.log('successfully deleted /tmp/hello');
+                                            console.log('successfully deleted ' + filename);
                                         });
 
                                     });
@@ -109,9 +103,6 @@ http.createServer(function(req, res) {
 
 
                 });
-
-
-
             });
         }
     });
@@ -154,3 +145,5 @@ var download = function(uri, filename, error_resp, callback) {
     });
 
 };
+
+

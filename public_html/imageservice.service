@@ -1,0 +1,22 @@
+[Unit]
+#/etc/systemd/system/
+Description=Nodejs web server
+
+[Service]
+ExecStart=/usr/bin/nodejs /home/dejanc/projects/ImageResizeWebService/public_html/engine-gm.js
+Restart=always
+StandardOutput=syslog
+SysLogIdentifier=engine-gm
+User=root
+Group=root
+Environment=PATH=/user/bin:/user/local/bin
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target
+
+#comands
+# systemctl enable imageresize.service
+# systemctl start imageresize.service
+# systemctl status imageresize.service
+
