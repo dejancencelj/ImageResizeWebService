@@ -1,22 +1,18 @@
 [Unit]
-#/etc/systemd/system/
 Description=Nodejs web server
 
 [Service]
+#Type=forking
+#PIDFile=/var/run/engine-gm.pid
+#ExecStartPre=/bin/rm -f /var/run/engine-gh.pid
 ExecStart=/usr/bin/nodejs /home/dejanc/projects/ImageResizeWebService/public_html/engine-gm.js
 Restart=always
-StandardOutput=syslog
-SysLogIdentifier=engine-gm
-User=root
-Group=root
-Environment=PATH=/user/bin:/user/local/bin
-Environment=NODE_ENV=production
+#StandardOutput=syslog
+#SysLogIdentifier=enginegm
+#User=root
+#Group=root
+#Environment=PATH=/user/bin:/user/local/bin
+#Environment=NODE_ENV=production
 
 [Install]
 WantedBy=multi-user.target
-
-#comands
-# systemctl enable imageresize.service
-# systemctl start imageresize.service
-# systemctl status imageresize.service
-
