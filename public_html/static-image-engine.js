@@ -99,9 +99,9 @@ require('http').createServer(function(request, response) {
                                 //newfilename = newfilename.replace("/", "\\");
                                 console.log(__dirname + '/orig' + filename);
                                 gm(__dirname + '/orig' + filename)
-                                        .resize(width, height, "")
-                                      //  .gravity('Center')
-                                     //   .crop(width, width)
+                                       // .resize(width, height, "")
+                                        .gravity('Center')
+                                        .crop(width, width)
                                         .subCommand('composite')
                                         .in('-compose', 'Over', __dirname + '/watermark/rtvslo_mmc_logo_small.png')
                                         .in('-gravity', 'southeast')
