@@ -60,11 +60,14 @@ require('http').createServer(function(request, response) {
     }
     ;
 
+    //CROP
     var width = typeof queryAsObject.w !== 'undefined' ? queryAsObject.w : 720;
     var height = typeof queryAsObject.h !== 'undefined' ? queryAsObject.h : 720;
 
     var offset_x = typeof queryAsObject.x !== 'undefined' ? queryAsObject.x : 0;
     var offset_y = typeof queryAsObject.y !== 'undefined' ? queryAsObject.y : 0;
+    
+    var resize_width = typeof queryAsObject.r !== 'undefined' ? queryAsObject.r : 720;
 
     if (height > 1920)
         height = 1920;
@@ -105,13 +108,14 @@ require('http').createServer(function(request, response) {
                                         // .resize(width, height, "")
                                         //.gravity('Center')
                                         .crop(width, height, offset_x, offset_y)
-                                        // .subCommand('composite')
-                                        // .in('-compose', 'Over', __dirname + '/watermark/rtvslo_mmc_logo_small.png')
-                                        //  .in('-gravity', 'southeast')
+
                                         .stream(function(err, stdout, stderr) {
                                             // beforeCrop is 600 * 450
                                             gm(stdout) // gm can read buffers ;)
-                                                    .resize(300)
+                                                    .resize(resize_width)
+                                                    .subCommand('composite')
+                                                    .in('-compose', 'Over', __dirname + '/watermark/rtvslo_mmc_logo_small.png')
+                                                    .in('-gravity', 'southeast')
                                                     .write(__dirname + '/output' + newfilename, function(err) {
                                                         if (!err) {
                                                             console.log('done resize');
