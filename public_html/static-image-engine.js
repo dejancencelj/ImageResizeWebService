@@ -100,16 +100,11 @@ require('http').createServer(function(request, response) {
                                 console.log(__dirname + '/orig' + filename);
                                 gm(__dirname + '/orig' + filename)
                                         .resize(width, height, "^")
+                                        .gravity('Center')
+                                        .crop(width, width)
                                         .subCommand('composite')
                                         .in('-compose', 'Over', __dirname + '/watermark/rtvslo_mmc_logo_small.png')
                                         .in('-gravity', 'southeast')
-                                        .gravity('Center')
-                                        .crop(width, width)
-                                        //.stroke("#ffffff")
-
-                                        //  .drawCircle(10, 10, 20, 10)
-                                        //.font("font/RobotoCondensed-Regular.ttf", 15)
-                                        //.drawText(30, 20, "MMC RTVSLO")
                                         .write(__dirname + '/output' + newfilename, function(err) {
                                             if (!err) {
                                                 console.log('done resize');
