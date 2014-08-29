@@ -61,7 +61,10 @@ require('http').createServer(function(request, response) {
     ;
 
     var width = typeof queryAsObject.w !== 'undefined' ? queryAsObject.w : 720;
-    var height = typeof queryAsObject.h !== 'undefined' ? queryAsObject.w : 720;
+    var height = typeof queryAsObject.h !== 'undefined' ? queryAsObject.h : 720;
+    
+    var offset_x = typeof queryAsObject.x !== 'undefined' ? queryAsObject.x : 0;
+    var offset_y = typeof queryAsObject.y !== 'undefined' ? queryAsObject.y : 0;
 
     if (height > 1920)
         height = 1920;
@@ -100,8 +103,8 @@ require('http').createServer(function(request, response) {
                                 console.log(__dirname + '/orig' + filename);
                                 gm(__dirname + '/orig' + filename)
                                        // .resize(width, height, "")
-                                        .gravity('Center')
-                                        .crop(width, width)
+                                        //.gravity('Center')
+                                        .crop(width, height, offset_x, offset_y)
                                        // .subCommand('composite')
                                        // .in('-compose', 'Over', __dirname + '/watermark/rtvslo_mmc_logo_small.png')
                                       //  .in('-gravity', 'southeast')
