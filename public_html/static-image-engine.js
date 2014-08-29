@@ -12,7 +12,7 @@ var apiKey = "dhYUzjyQMX"; //Before we will get db running
 var fileServer = new static.Server('./output', {cache: 3600});
 
 require('http').createServer(function(request, response) {
-    
+   
     
     startTime = new Date().getTime();
     
@@ -101,7 +101,7 @@ require('http').createServer(function(request, response) {
                                 gm(__dirname + '/orig' + filename)
                                         .resize(width, height, "")
                                         .subCommand('composite')
-                                        .in('-compose', 'Over', __dirname + '/watermark/rtvslo_mmc_logo.png')
+                                        .in('-compose', 'Over', __dirname + '/watermark/rtvslo_mmc_logo_small.png')
                                         .in('-gravity', 'southeast')
 
                                         //.stroke("#ffffff")
