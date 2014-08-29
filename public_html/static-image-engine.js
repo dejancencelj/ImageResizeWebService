@@ -12,26 +12,26 @@ var apiKey = "dhYUzjyQMX"; //Before we will get db running
 var fileServer = new static.Server('./output', {cache: 3600});
 
 require('http').createServer(function(request, response) {
-   
-    
+
+
     startTime = new Date().getTime();
-    
-    
+
+
     var parsedUrl = url.parse(request.url, true); // true to get query as object
     var queryAsObject = parsedUrl.query;
     console.log(queryAsObject.k);
-    if(queryAsObject.k){
-        if(queryAsObject.k !== apiKey){
+    if (queryAsObject.k) {
+        if (queryAsObject.k !== apiKey) {
             response.writeHead(401, {'Content-Type': 'text/html'});
             response.end("incorrenct  API KEY");
             return;
         }
-        
-    }else{
-         response.writeHead(401, {'Content-Type': 'text/html'});
-         response.end("missing API KEY");
-         return;
-       
+
+    } else {
+        response.writeHead(401, {'Content-Type': 'text/html'});
+        response.end("missing API KEY");
+        return;
+
     }
 
     startTime = new Date().getTime();
@@ -62,7 +62,7 @@ require('http').createServer(function(request, response) {
 
     var width = typeof queryAsObject.w !== 'undefined' ? queryAsObject.w : 720;
     var height = typeof queryAsObject.h !== 'undefined' ? queryAsObject.h : 720;
-    
+
     var offset_x = typeof queryAsObject.x !== 'undefined' ? queryAsObject.x : 0;
     var offset_y = typeof queryAsObject.y !== 'undefined' ? queryAsObject.y : 0;
 
@@ -102,49 +102,58 @@ require('http').createServer(function(request, response) {
                                 //newfilename = newfilename.replace("/", "\\");
                                 console.log(__dirname + '/orig' + filename);
                                 gm(__dirname + '/orig' + filename)
-                                       // .resize(width, height, "")
+                                        // .resize(width, height, "")
                                         //.gravity('Center')
                                         .crop(width, height, offset_x, offset_y)
-                                       // .subCommand('composite')
-                                       // .in('-compose', 'Over', __dirname + '/watermark/rtvslo_mmc_logo_small.png')
-                                      //  .in('-gravity', 'southeast')
-                                        .write(__dirname + '/output' + newfilename, function(err) {
-                                            if (!err) {
-                                                console.log('done resize');
-                                                endTime = new Date().getTime();
-                                                diff = endTime - startTime;
-                                                console.log("Time to resize: " + diff + "ms");
+                                        // .subCommand('composite')
+                                        // .in('-compose', 'Over', __dirname + '/watermark/rtvslo_mmc_logo_small.png')
+                                        //  .in('-gravity', 'southeast')
+                                        .stream(function(err, stdout, stderr) {
+                                            // beforeCrop is 600 * 450
+                                            gm(stdout) // gm can read buffers ;)
+                                                    .resize(300)
+                                                    .write(__dirname + '/output' + newfilename, function(err) {
+                                                        if (!err) {
+                                                            console.log('done resize');
+                                                            endTime = new Date().getTime();
+                                                            diff = endTime - startTime;
+                                                            console.log("Time to resize: " + diff + "ms");
 
-                                                fs.readFile(__dirname + '/output' + newfilename, function(err, data) {
-                                                    if (err)
-                                                        throw err; // Fail if the file can't be read.
+                                                            fs.readFile(__dirname + '/output' + newfilename, function(err, data) {
+                                                                if (err)
+                                                                    throw err; // Fail if the file can't be read.
 
-                                                    response.writeHead(200, {'Content-Type': 'image/jpeg'});
-                                                    response.end(data);
-                                                    startT = process.hrtime(startT);
+                                                                response.writeHead(200, {'Content-Type': 'image/jpeg'});
+                                                                response.end(data);
+                                                                startT = process.hrtime(startT);
 
-                                                    console.log('operation took %d seconds and %d microseconds', startT[0], Math.floor(startT[1] / 1000));
+                                                                console.log('operation took %d seconds and %d microseconds', startT[0], Math.floor(startT[1] / 1000));
 
-                                                    fs.unlink(__dirname + '/orig/' + filename, function(err) {
-                                                        if (err)
-                                                            throw err;
+                                                                fs.unlink(__dirname + '/orig/' + filename, function(err) {
+                                                                    if (err)
+                                                                        throw err;
 
-                                                        console.log('successfully deleted ' + __dirname + '/orig/' + filename);
+                                                                    console.log('successfully deleted ' + __dirname + '/orig/' + filename);
+                                                                });
+
+                                                            });
+
+
+                                                        } else {
+                                                            console.log(err);
+                                                            response.writeHead(200, {'Content-Type': 'text/html'});
+                                                            response.end("ERROR: " + err);
+                                                            return;
+                                                        }
+                                                        ;
+
+
                                                     });
 
-                                                });
-
-
-                                            } else {
-                                                console.log(err);
-                                                response.writeHead(200, {'Content-Type': 'text/html'});
-                                                response.end("ERROR: " + err);
-                                                return;
-                                            }
-                                            ;
-
-
                                         });
+
+
+
 
                             }
 
