@@ -9,10 +9,22 @@ var fs = require('fs')
 var startTime = 0;
 var endTime = 0;
 var diif = 0;
+var apiKey = "dhYUzjyQMX"; //Before we will get db running
+
 http.createServer(function(req, res) {
     startTime = new Date().getTime();
+    
+    
     var parsedUrl = url.parse(req.url, true); // true to get query as object
     var queryAsObject = parsedUrl.query;
+    
+    if(!queryAsObject.k){
+        
+    }else{
+         res.writeHead(401, {'Content-Type': 'text/html'});
+         res.end("missing API KEY");
+       
+    }
     // console.log(JSON.stringify(req));
 
     var image_url = queryAsObject.url;
@@ -20,15 +32,18 @@ http.createServer(function(req, res) {
         res.writeHead(200, {'Content-Type': 'text/html'});
         res.end("missing url parameter... try http://kvazar.rtvslo.si/gmagick?url=http://www.wired.com/wiredenterprise/wp-content/uploads//2012/10/ff_googleinfrastructure_large.jpg");
         return;
-    };
-    var width = typeof queryAsObject.w !== 'undefined' ? queryAsObject.w  : 720;
-    var height = typeof queryAsObject.h !== 'undefined' ? queryAsObject.w  : 720;
-    
-    if(height > 1920)height=1920;
-    if(width > 1920)width=1920;
-    
+    }
+    ;
+    var width = typeof queryAsObject.w !== 'undefined' ? queryAsObject.w : 720;
+    var height = typeof queryAsObject.h !== 'undefined' ? queryAsObject.w : 720;
+
+    if (height > 1920)
+        height = 1920;
+    if (width > 1920)
+        width = 1920;
+
     var date = typeof queryAsObject.d !== 'undefined' ? date : "2000-01-01";
-    
+
     var filename = image_url.substring(image_url.lastIndexOf("/"), image_url.length);
     console.log(filename);
     if (filename === "/") {
@@ -38,7 +53,7 @@ http.createServer(function(req, res) {
     }
 
     var ending = filename.substring(filename.lastIndexOf("."), filename.length);
-  
+
     console.log(ending);
     if (ending === ".JPG" || ending === ".PNG" || ending === ".GIF" || ending === ".jpg" || ending === ".png" || ending === ".gif") {
 
@@ -47,9 +62,9 @@ http.createServer(function(req, res) {
         res.end("Unsupported image format");
         return;
     }
-   
-    var newfilename = filename.replace(ending,"_"+width+"_"+height+ending);
-   // console.log(filename);
+
+    var newfilename = filename.replace(ending, "_" + width + "_" + height + ending);
+    // console.log(filename);
 
     fs.exists(__dirname + '/output' + newfilename, function(exists) {
         if (exists) {
@@ -81,30 +96,36 @@ http.createServer(function(req, res) {
                                 //.font("font/RobotoCondensed-Regular.ttf", 15)
                                 //.drawText(30, 20, "MMC RTVSLO")
                                 .write(__dirname + '/output' + newfilename, function(err) {
-                                    if (!err)
-                                        console.log('done resize');
-                                    console.log(JSON.stringify(err));
-                                    endTime = new Date().getTime();
-                                    diff = endTime - startTime;
-                                    console.log("Time to resize: " + diff + "ms");
-
-                                    fs.readFile(__dirname + '/output' + newfilename, function(err, data) {
-                                        if (err)
-                                            throw err; // Fail if the file can't be read.
-
-                                        res.writeHead(200, {'Content-Type': 'image/jpeg'});
-                                        res.end(data);
+                                    if (!err) {
                                         endTime = new Date().getTime();
                                         diff = endTime - startTime;
-                                        console.log("Time to serve: " + diff + "ms");
+                                        console.log("Time to resize: " + diff + "ms");
 
-                                        fs.unlink(__dirname + '/orig/' + newfilename, function(err) {
+                                        fs.readFile(__dirname + '/output' + newfilename, function(err, data) {
                                             if (err)
-                                                throw err;
-                                            console.log('successfully deleted ' + newfilename);
-                                        });
+                                                throw err; // Fail if the file can't be read.
 
-                                    });
+                                            res.writeHead(200, {'Content-Type': 'image/jpeg'});
+                                            res.end(data);
+                                            endTime = new Date().getTime();
+                                            diff = endTime - startTime;
+                                            console.log("Time to serve: " + diff + "ms");
+
+                                            fs.unlink(__dirname + '/orig/' + newfilename, function(err) {
+                                                if (err)
+                                                    throw err;
+                                                console.log('successfully deleted ' + newfilename);
+                                            });
+
+                                        });
+                                    } else {
+                                        console.log(JSON.stringify(err));
+                                    }
+
+
+
+
+
 
 
                                 });
