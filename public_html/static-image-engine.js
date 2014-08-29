@@ -43,7 +43,7 @@ require('http').createServer(function(request, response) {
 
     if (!image_url) {
         response.writeHead(200, {'Content-Type': 'text/html'});
-        response.end("missing image url parameter... try http://kvazar.rtvslo.si/gmagick?url=http://www.wired.com/wiredenterprise/wp-content/uploads//2012/10/ff_googleinfrastructure_large.jpg");
+        response.end("missing image url parameter... try http://kvazar.rtvslo.si/getimage?url=http://www.wired.com/wiredenterprise/wp-content/uploads//2012/10/ff_googleinfrastructure_large.jpg");
         return;
     }
     ;
