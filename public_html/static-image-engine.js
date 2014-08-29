@@ -102,9 +102,9 @@ require('http').createServer(function(request, response) {
                                        // .resize(width, height, "")
                                         .gravity('Center')
                                         .crop(width, width)
-                                        .subCommand('composite')
-                                        .in('-compose', 'Over', __dirname + '/watermark/rtvslo_mmc_logo_small.png')
-                                        .in('-gravity', 'southeast')
+                                       // .subCommand('composite')
+                                       // .in('-compose', 'Over', __dirname + '/watermark/rtvslo_mmc_logo_small.png')
+                                      //  .in('-gravity', 'southeast')
                                         .write(__dirname + '/output' + newfilename, function(err) {
                                             if (!err) {
                                                 console.log('done resize');
